@@ -33,8 +33,8 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
 
     // Auth Group
     $r->addGroup('/{group:auth}', function (FastRoute\RouteCollector $r) {
-        $r->addRoute('POST', '/register', 'register');
-        $r->addRoute('POST', '/login', 'login');
+        $r->addRoute('POST', '/register', 'register');          // xong
+        $r->addRoute('POST', '/login', 'login');                //xong
         $r->addRoute('GET', '/test',  ['requireLogin', 'test']);
         $r->addRoute('PATCH', '/password', ['requireLogin', 'changePassword']);
         $r->addRoute('PATCH', '/profile', ['requireLogin', 'changeProfile']);
