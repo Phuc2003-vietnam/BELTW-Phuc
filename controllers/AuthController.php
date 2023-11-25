@@ -65,7 +65,7 @@ class AuthController
 
             // Attached data for client side
             $row['name'] = $name;
-            $row['image_url'] = $image_url;
+            // $row['image_url'] = $image_url;
 
             http_response_code(200);
             echo json_encode(["message" => "User created successfully", "token" => $jwt, "data" => $row]);
