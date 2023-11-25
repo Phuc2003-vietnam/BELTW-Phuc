@@ -20,7 +20,7 @@ class User
             $conditions[] = "$key='$value'";    //push "..." to $conditions
         }
         $whereClause = !empty($conditions) ? 'WHERE ' . implode(' AND ', $conditions) : '';
-        $query = "SELECT $selectClause FROM USER $whereClause";
+        $query = "SELECT $selectClause FROM USERS $whereClause";
         // echo $query;
         try {
             $result = $connection->prepare($query);
@@ -30,7 +30,7 @@ class User
             // you need to use its method : fetch,fetchAll
             return $result;
         } catch (PDOException $e) {
-            echo "Unknown error in USER::get: " . $e->getMessage();
+            echo "Unknown error in USERS::get: " . $e->getMessage();
         }
     }
 
@@ -44,7 +44,7 @@ class User
 
         $keys = array_keys($data);
         $values = array_values($data);
-        $query = "INSERT INTO USER (" . implode(", ", $keys) . ") VALUES ('" . implode("', '", $values) . "')";
+        $query = "INSERT INTO USERS (" . implode(", ", $keys) . ") VALUES ('" . implode("', '", $values) . "')";
 
         try {
             $result = $connection->prepare($query);
@@ -53,7 +53,7 @@ class User
 
             return $result;
         } catch (PDOException $e) {
-            echo "Unknown error in USER::create: " . $e->getMessage();
+            echo "Unknown error in USERS::create: " . $e->getMessage();
         }
     }
 
@@ -69,7 +69,7 @@ class User
             $updates[] = "$key='$value'";
         }
 
-        $query = "UPDATE USER SET " . implode(", ", $updates) . " WHERE id='$id'";
+        $query = "UPDATE USERS SET " . implode(", ", $updates) . " WHERE id='$id'";
 
         try {
             $result = $connection->prepare($query);
@@ -78,7 +78,7 @@ class User
 
             return $result;
         } catch (PDOException $e) {
-            echo "Unknown error in USER::update: " . $e->getMessage();
+            echo "Unknown error in USERS::update: " . $e->getMessage();
         }
     }
 
@@ -86,7 +86,7 @@ class User
     {
         global $connection;
 
-        $query = "DELETE FROM USER WHERE id='$id'";
+        $query = "DELETE FROM USERS WHERE id='$id'";
 
         try {
             $result = $connection->prepare($query);
@@ -95,7 +95,7 @@ class User
 
             return $result;
         } catch (PDOException $e) {
-            echo "Unknown error in USER::delete: " . $e->getMessage();
+            echo "Unknown error in USERS::delete: " . $e->getMessage();
         }
     }
 
@@ -103,7 +103,7 @@ class User
     {
         global $connection;
 
-        $query = "SELECT user.id, email, name, role FROM USER INNER JOIN USER_INFO ON user.id = user_info.id";
+        $query = "SELECT USERS.id, email, name, role FROM USERS INNER JOIN USER_INFO ON USERS.id = user_info.id";
 
         try {
             $result = $connection->prepare($query);
@@ -112,7 +112,7 @@ class User
 
             return $result;
         } catch (PDOException $e) {
-            echo "Unknown error in USER::get: " . $e->getMessage();
+            echo "Unknown error in USERS::get: " . $e->getMessage();
         }
     }
 }
