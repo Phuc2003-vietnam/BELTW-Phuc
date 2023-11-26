@@ -69,9 +69,9 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
     });
 
     // Blog Group
-    $r->addGroup('/{group:blog}', function (FastRoute\RouteCollector $r) {
-        $r->addRoute('GET', '',  'getBlogs');
-        $r->addRoute('GET', '/{id:\d+}', 'getSingleBlog');
+    $r->addGroup('/{group:news}', function (FastRoute\RouteCollector $r) {
+        $r->addRoute('GET', '',  'getNews');        // Dang lam 
+        $r->addRoute('GET', '/{id:\d+}', 'getSingleNew');       // Dang lam
         $r->addRoute('POST', '', ['requireAdmin', 'addBlog']);
         $r->addRoute('PATCH', '/{id:\d+}', ['requireAdmin', 'updateBlog']);
         $r->addRoute('DELETE', '/{id:\d+}', ['requireAdmin', 'deleteBlog']);
