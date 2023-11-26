@@ -19,15 +19,14 @@ class ProductController
             $queryString = $_SERVER['QUERY_STRING'];
             parse_str($queryString, $queryParams);
         }
-
         try {
             $product = new Product();
 
             // Get product by name if exist
             $result = $product->get(
                 $queryParams,
-                ['name', 'max_price', 'min_price', 'category_id'],
-                ['id', 'name', 'image_url', 'price', 'short_description', 'quantity', 'specs']
+                ['product_name', 'max_price', 'min_price', 'category','order_by'],
+                []
             );
 
             $rows = $result->fetchAll(PDO::FETCH_ASSOC);
@@ -92,10 +91,11 @@ class ProductController
             !isset($data['product_name'])
             || !isset($data['price'])
             || !isset($data['description'])
-            // || !isset($data['size'])    
+            || !isset($data['category'])
+            || !isset($data['size'])    
             || !isset($data['quantity'])
-            // || !isset($data['color'])
-            // || !isset($data['thumbnail'])
+            || !isset($data['color'])
+            || !isset($data['thumbnail'])
         ) {
             http_response_code(400);
             echo json_encode(["message" => "Missing name, desciption, price, quantity or at least 1 thumbnail"]);
@@ -107,7 +107,7 @@ class ProductController
             // Create product
             $result = $product->create(
                 $data,
-                ['product_name', 'description', 'size', 'price', 'quantity', 'color','thumbnail']
+                ['product_name', 'description', 'size', 'price', 'quantity', 'color','thumbnail','category','discount']
             );
 
             http_response_code(200);
@@ -128,7 +128,7 @@ class ProductController
             $product = new Product();
 
             // Check if product exist
-            $result = $product->get(['id' => $param['id']], ['id']);
+            $result = $product->get(['product_id' => $param['id']], ['product_id']);
             if ($result->rowCount() == 0) {
                 http_response_code(400);
                 echo json_encode(["message" => "Product does not exist"]);
@@ -139,7 +139,7 @@ class ProductController
             $result = $product->update(
                 $param['id'],
                 $data,
-                ['name', 'short_description', 'description', 'image_url', 'price', 'quantity', 'specs']
+                ['product_name', 'description', 'size', 'price', 'quantity', 'color','thumbnail','category','discount']
             );
 
             http_response_code(200);
@@ -159,16 +159,15 @@ class ProductController
             $product = new Product();
 
             // Check if product exist
-            $result = $product->get(['id' => $param['id']], ['id'], ['id']);
+            $result = $product->get(['product_id' => $param['id']], ['product_id'], ['product_id']);
             if ($result->rowCount() == 0) {
                 http_response_code(400);
-                echo json_encode(["message" => "Blog does not exist"]);
+                echo json_encode(["message" => "Product does not exist"]);
                 die();
             }
-
             // Delete product
             $product->delete($param['id']);
-
+            //Not yet handle delete comment
             http_response_code(200);
             echo json_encode(["message" => "Product deleted successfully"]);
         } catch (PDOException $e) {
