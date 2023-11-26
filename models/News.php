@@ -13,8 +13,6 @@ class News
             $queryParams = array_intersect_key($queryParams, array_flip($allowedKeys));
         }  
 
-        // if(!empty($queryParams))
-
         $selectClause = empty($select) ? '*' : implode(', ', $select);
      
         $conditions = [];
@@ -46,7 +44,7 @@ class News
         $values = "'" . implode("', '", $data) . "'";
         
         $query = "INSERT INTO News ($columns) VALUES ($values)";
-        echo "create News query : " . $query;
+        // echo "create News query : " . $query;
         
         try {
             $result = $connection->query($query);

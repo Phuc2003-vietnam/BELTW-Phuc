@@ -49,7 +49,7 @@ class Middleware
             }
 
             $vars['user'] = [
-                'id' => $row['id'],
+                'user_id' => $row['user_id'],
                 'email' => $row['email'],
                 'role' => $row['role']
             ];
