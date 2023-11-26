@@ -35,8 +35,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
     $r->addGroup('/{group:auth}', function (FastRoute\RouteCollector $r) {
         $r->addRoute('POST', '/register', 'register');          // xong
         $r->addRoute('POST', '/login', 'login');                //xong
-        $r->addRoute('GET', '/test',  ['requireLogin', 'test']);
-        $r->addRoute('PATCH', '/password', ['requireLogin', 'changePassword']);
+        $r->addRoute('PATCH', '/password', ['requireLogin', 'changePassword']); 
         $r->addRoute('PATCH', '/profile', ['requireLogin', 'changeProfile']);
         $r->addRoute('DELETE', '', ['requireLogin', 'deleteSelf']);
         $r->addRoute('GET', '/','hello');
@@ -50,11 +49,11 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
 
     // Product Group
     $r->addGroup('/{group:product}', function (FastRoute\RouteCollector $r) {
-        $r->addRoute('GET', '', 'getProducts');
+        $r->addRoute('GET', '', 'getProducts');                     //xong , can get all or get single by name , category,order_by        
         $r->addRoute('GET', '/{id:\d+}', 'getSingleProduct');
-        $r->addRoute('POST', '', ['requireAdmin', 'addProduct']);
-        $r->addRoute('PATCH', '/{id:\d+}', ['requireAdmin', 'updateProduct']);
-        $r->addRoute('DELETE', '/{id:\d+}', ['requireAdmin', 'deleteProduct']);
+        $r->addRoute('POST', '', ['requireAdmin', 'addProduct']); //xong
+        $r->addRoute('PATCH', '/{id:\d+}', ['requireAdmin', 'updateProduct']);  //xong
+        $r->addRoute('DELETE', '/{id:\d+}', ['requireAdmin', 'deleteProduct']); //xong
         $r->addRoute('POST', '/{id:\d+}/comment', ['requireLogin', 'commentProduct']);
         $r->addRoute('POST', '/{id:\d+}/rate', ['requireLogin', 'rateProduct']);
         $r->addRoute('POST', '/{id:\d+}/category', ['requireAdmin', 'addProductCategory']);
@@ -125,10 +124,10 @@ switch ($routeInfo[0]) {
     case FastRoute\Dispatcher::FOUND:
         $handler = $routeInfo[1];               // catch the path , not include group : ex : login
         $vars = $routeInfo[2];                  // array :  ex : $vars[group]= "auth"
-        $json = file_get_contents('php://input');       // get the json passed to it
+        $json = file_get_contents('php://input');       // get the json passed to it 
         $data = array();
         if (!empty($json)) {
-            $data = json_decode($json, true);       // change json type to php array
+            $data = json_decode($json, true);       // change json type to php array: [color=>'grey','description'=>'Hello my friend']
         }
         // Call middleware
         include_once './middlewares/Middleware.php';
