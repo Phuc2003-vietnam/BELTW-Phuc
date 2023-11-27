@@ -58,4 +58,22 @@ class NewsComment
             echo "Unknown error in news_comments::create: " . $e->getMessage();
         }
     }
+
+     public function delete($comment_id)
+    {
+        global $connection;
+
+        $query = "DELETE FROM news_comments WHERE comment_id = '$comment_id'";
+   
+        try {
+
+            $result = $connection->query($query);
+            return $result;
+
+        } catch (PDOException $e) {
+
+            echo "Unknown error in News_Comments::delete: " . $e->getMessage();
+
+        }
+    }
 }

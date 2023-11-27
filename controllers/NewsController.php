@@ -25,7 +25,6 @@ class NewsController
         }
     }
 
-
     public function getSingleNew($param, $data)
     {
         $news_id = $param["news_id"];
@@ -44,7 +43,7 @@ class NewsController
 
         } else {
             // get Comment for News
-            $result = $NewsComment->get(['news_id' => $news_id], [] , ['avatar_url' , 'user_id' , 'user_name' , 'created_at', 'updated_at', 'title' , 'content']);
+            $result = $NewsComment->get(['news_id' => $news_id], [] , ['comment_id', 'news_id' , 'avatar_url' , 'user_id' , 'user_name' , 'created_at', 'updated_at', 'title' , 'content']);
             $cmtrows = $result->fetchAll(PDO::FETCH_ASSOC);
 
             http_response_code(200);
@@ -72,7 +71,6 @@ class NewsController
             http_response_code(400);
             echo json_encode(["message" => "News does not exist"]);
             die();
-
         }
 
         // add news_id into data
@@ -96,6 +94,35 @@ class NewsController
             echo "Unknown error in (comment for news) NewsController:: addNews: " . $e->getMessage();
             die();
             
+        }
+    }
+
+     public function deleteCommentForNews($param, $data)
+    { 
+       
+        $NewsComment = new NewsComment();
+        $comment_id = $param["comment_id"];
+ 
+        $result = $NewsComment->get(['comment_id' => $comment_id], ['comment_id'], ['comment_id']);
+        if ($result->rowCount() == 0) {
+
+            http_response_code(400);
+            echo json_encode(["message" => "News_Comment does not exist"]);
+            die();
+
+        }
+
+        try{
+
+            $NewsComment->delete($comment_id);
+            http_response_code(200);
+            echo json_encode(["message" => "News_Comment deleted successfully"]);
+
+        } catch (PDOException $e) {
+     
+            echo "Unknown error in NewsController::deleteCommentForNews : " . $e->getMessage();
+            die();
+
         }
     }
  

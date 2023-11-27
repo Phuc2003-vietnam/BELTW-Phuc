@@ -92,8 +92,7 @@ class News
         global $connection;
 
         $query = "DELETE FROM News WHERE news_id = '$id'";
-        echo  "delete News query : " . $query;
-        
+       
         try {
 
             $result = $connection->query($query);

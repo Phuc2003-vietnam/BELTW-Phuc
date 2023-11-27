@@ -83,7 +83,8 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
         $r->addRoute('PATCH', '/{news_id:\d+}', ['requireAdmin', 'updateNews']);     // Done
         $r->addRoute('DELETE', '/{news_id:\d+}', ['requireAdmin', 'deleteNews']);   // Done
         $r->addRoute('POST', '/{news_id:\d+}/comment', ['requireLogin', 'addCommentForNews']);      // Done
-    });
+        $r->addRoute('DELETE', '/deletecomment/{comment_id:\d+}', ['requireLogin', 'deleteCommentForNews']);      // Done
+    }); 
 
     // Promotion Group
     $r->addGroup('/{group:promotion}', function (FastRoute\RouteCollector $r) {
