@@ -22,14 +22,17 @@ class News
         
         $whereClause = !empty($conditions) ? 'WHERE ' . implode(' AND ', $conditions) : '';
 
-        $query = "SELECT $selectClause FROM News $whereClause";
+        $query = "SELECT $selectClause FROM News $whereClause ORDER BY News.updated_at DESC";
 
         try {
-            $result = $connection->query($query);
 
+            $result = $connection->query($query);
             return $result;
+
         } catch (PDOException $e) {
+
             echo "Unknown error in News::get: " . $e->getMessage();
+            
         }
     }
 
@@ -47,10 +50,12 @@ class News
         // echo "create News query : " . $query;
         
         try {
-            $result = $connection->query($query);
 
+            $result = $connection->query($query);
             return $result;
+
         } catch (PDOException $e) {
+
             echo "Unknown error in NewsS::create: " . $e->getMessage();
         }
     }
@@ -68,14 +73,16 @@ class News
         }
 
         $query = "UPDATE News SET " . implode(", ", $updates) . " WHERE news_id = '$id'";
-        echo  "update News query : " . $query;
-        
+       
         try {
+            
             $result = $connection->query($query);
-
             return $result;
+
         } catch (PDOException $e) {
+
             echo "Unknown error in News::update: " . $e->getMessage();
+
         }
     }
 
@@ -88,11 +95,14 @@ class News
         echo  "delete News query : " . $query;
         
         try {
-            $result = $connection->query($query);
 
+            $result = $connection->query($query);
             return $result;
+
         } catch (PDOException $e) {
+
             echo "Unknown error in News::delete: " . $e->getMessage();
+
         }
     }
 

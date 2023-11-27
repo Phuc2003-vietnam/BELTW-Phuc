@@ -75,14 +75,14 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
         $r->addRoute('DELETE', '/{id:\d+}', ['requireAdmin', 'deleteCategory']);
     });
 
-    // Blog Group
+    // News Group
     $r->addGroup('/{group:news}', function (FastRoute\RouteCollector $r) {
-        $r->addRoute('GET', '',  'getNews');                                                // Done , can get all or get single by news_id
-        $r->addRoute('GET', '/{id:\d+}', 'getSingleNew');    
-        $r->addRoute('POST', '', ['requireAdmin', 'addNews']);
-        $r->addRoute('PATCH', '/{id:\d+}', ['requireAdmin', 'updateBlog']);
-        $r->addRoute('DELETE', '/{id:\d+}', ['requireAdmin', 'deleteNews']);
-        $r->addRoute('POST', '/{id:\d+}/comment', ['requireLogin', 'commentBlog']);
+        $r->addRoute('GET', '',  'getNews'); // Done  
+        $r->addRoute('GET', '/{news_id:\d+}',   'getSingleNew');    // Done
+        $r->addRoute('POST', '', ['requireAdmin', 'addNews']);  // Done     
+        $r->addRoute('PATCH', '/{news_id:\d+}', ['requireAdmin', 'updateNews']);
+        $r->addRoute('DELETE', '/{news_id:\d+}', ['requireAdmin', 'deleteNews']);
+        $r->addRoute('POST', '/{id:\d+}/comment', ['requireLogin', 'commentNews']);
     });
 
     // Promotion Group

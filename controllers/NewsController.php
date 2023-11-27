@@ -6,52 +6,48 @@ class NewsController
 {
     public function getNews($param, $data)
     {
-        $queryParams = array();
-        $allowedKeys = ['news_id'];
+        $queryParams = [];
+        $allowedKeys = [];
         $select = ['news_id' ,'created_at', 'updated_at', 'image_url' , 'title', 'content'];
 
-        if (isset($_SERVER['QUERY_STRING'])) {
-           
-            $queryString = $_SERVER['QUERY_STRING'];
-            parse_str($queryString, $queryParams);
-
-            if(count(array_intersect_key($queryParams, array_flip($allowedKeys)))==0) { // if the parameter does not match the allowed key (case get single new)
-               
-                http_response_code(404);
-                echo json_encode(["message" => "News Params not Suitable"]);
-                return;
-            }
-        } 
-        
         try {
             $News = new News();
             $result = $News->get($queryParams, $allowedKeys, $select);
             $rows = $result->fetchAll(PDO::FETCH_ASSOC);
-           
-            if($queryParams == []) { 
-
-                http_response_code(200);
-                echo json_encode(["message" => "News List fetched Successfully", "data" => $rows]);
-            } else {
-
-                if($result->rowCount() == 0) {
-
-                    http_response_code(404);
-                    echo json_encode(["message" => "No News found"]);
-                } else {
-                        
-                    http_response_code(200);
-                    echo json_encode(["message" => "News fetched Successfully", "data" => $rows]);
-                }
-            }
+      
+            http_response_code(200);
+            echo json_encode(["message" => "News List fetched Successfully", "data" => $rows]);
+        
         } catch (PDOException $e) {
-            echo "Unknown error in NewsController::getNewss: " . $e->getMessage();
+            echo "Unknown error in NewsController::getNews: " . $e->getMessage();
             die();
         }
     }
 
 
-    
+    public function getSingleNew($param, $data)
+    {
+        $news_id = $param["news_id"];
+        $allowedKeys = ['news_id'];
+        $select = ['news_id' ,'created_at', 'updated_at', 'image_url' , 'title', 'content'];
+
+        $News = new News();
+        $result = $News->get(['news_id' => $news_id], $allowedKeys, $select);
+        $rows = $result->fetchAll(PDO::FETCH_ASSOC);
+
+        if($result->rowCount() == 0) {
+
+            http_response_code(404);
+            echo json_encode(["message" => "No News found"]);
+
+        } else {
+            
+            http_response_code(200);
+            echo json_encode(["message" => "News fetched Successfully", "data" => $rows]);
+
+        }
+    }
+
     public function addNews($param, $data)
     {
         if (!isset($data['user_id'])
@@ -72,7 +68,7 @@ class NewsController
                 $data,
                 $allowedKeys
             );
-
+            
             http_response_code(200);
             echo json_encode(["message" => "News created successfully"]);
         } catch (PDOException $e) {
@@ -92,48 +88,63 @@ class NewsController
         $allowedKeys = ['image_url', 'title', 'content'];
 
         try {
+
             $News = new News();
+            $news_id = $param["news_id"];
 
-            $newsResult = $News->get(['news_id' => $param['news_id']], ['news_id'], $allowedKeys);
-            if ($newsResult->rowCount() == 0) {
-                http_response_code(404);
-                echo json_encode(["message" => "News not found"]);
-                return;
-            }
-
-            $News->update($param['news_id'], $data, $allowedKeys);
-
-            http_response_code(200);
-            echo json_encode(["message" => "News updated successfully"]);
-        } catch (PDOException $e) {
-            echo "Unknown error in NewsController::updateNews: " . $e->getMessage();
-            die();
-        }
-    }
-
-    
-    public function deleteNews($param, $data)
-    {
-        try {
+           // Check if News exist
             $News = new News();
-
-            // Check if News exist
-            $result = $News->get(['news_id' => $param['news_id']], ['news_id'], ['news_id']);
+            $result = $News->get(['news_id' => $news_id], ['news_id'], ['news_id']);
             if ($result->rowCount() == 0) {
                 http_response_code(400);
                 echo json_encode(["message" => "News does not exist"]);
                 die();
             }
+
+            $News->update($news_id, $data, $allowedKeys);
+
+            http_response_code(200);
+            echo json_encode(["message" => "News updated successfully"]);
+            
+        } catch (PDOException $e) {
+
+            echo "Unknown error in NewsController::updateNews: " . $e->getMessage();
+            die();
+
+        }
+    }
+
+    
+    public function deleteNews($param, $data)
+    {   
+        try {
+
+            $news_id = $param["news_id"];
+            $allowedKeys = ['news_id'];
+            $select = ['news_id' ,'created_at', 'updated_at', 'image_url' , 'title', 'content'];
+            
+            // Check if News exist
+            $News = new News();
+            $result = $News->get(['news_id' => $news_id], ['news_id'], ['news_id']);
+            if ($result->rowCount() == 0) {
+                http_response_code(400);
+                echo json_encode(["message" => "News does not exist"]);
+                die();
+            }
+
             // Delete News
-            $News->delete($param['news_id']);
-            //Not yet handle delete comment
-     
+            $News->delete($news_id);
+ 
             http_response_code(200);
             echo json_encode(["message" => "News deleted successfully"]);
+
         } catch (PDOException $e) {
      
             echo "Unknown error in NewsController::deleteNews : " . $e->getMessage();
             die();
+
         }
     }
+
+    
 }
