@@ -4,7 +4,7 @@ require_once './config/Database.php';
 
 $connection = Database::getInstance()->getConnection();
 
-class NewComment
+class ProductComment
 {
     public function get($queryParams, $allowedKeys = [], $select = [])
     {
@@ -22,7 +22,7 @@ class NewComment
         
         $whereClause = !empty($conditions) ? 'WHERE ' . implode(' AND ', $conditions) : '';
 
-        $query = "SELECT $selectClause FROM new_comments $whereClause ORDER BY new_comments.updated_at DESC";
+        $query = "SELECT $selectClause FROM product_comments $whereClause ORDER BY product_comments.updated_at DESC";
 
         try {
 
@@ -31,7 +31,7 @@ class NewComment
 
         } catch (PDOException $e) {
 
-            echo "Unknown error in new_comments::get: " . $e->getMessage();
+            echo "Unknown error in product_comments::get: " . $e->getMessage();
             
         }
     }
@@ -46,7 +46,7 @@ class NewComment
         $columns = implode(', ', array_keys($data));
         $values = "'" . implode("', '", $data) . "'";
         
-        $query = "INSERT INTO new_comments ($columns) VALUES ($values)";
+        $query = "INSERT INTO product_comments ($columns) VALUES ($values)";
         
         try {
 
@@ -55,7 +55,7 @@ class NewComment
 
         } catch (PDOException $e) {
 
-            echo "Unknown error in new_comments::create: " . $e->getMessage();
+            echo "Unknown error in product_comments::create: " . $e->getMessage();
         }
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 require_once './models/News.php';
+require_once './models/NewsComment.php';
  
 class NewsController
 {
@@ -32,6 +33,7 @@ class NewsController
         $select = ['news_id' ,'created_at', 'updated_at', 'image_url' , 'title', 'content'];
 
         $News = new News();
+        $NewsComment = new NewsComment();
         $result = $News->get(['news_id' => $news_id], $allowedKeys, $select);
         $rows = $result->fetchAll(PDO::FETCH_ASSOC);
 
@@ -41,12 +43,62 @@ class NewsController
             echo json_encode(["message" => "No News found"]);
 
         } else {
-            
+            // get Comment for News
+            $result = $NewsComment->get(['news_id' => $news_id], [] , ['avatar_url' , 'user_id' , 'user_name' , 'created_at', 'updated_at', 'title' , 'content']);
+            $cmtrows = $result->fetchAll(PDO::FETCH_ASSOC);
+
             http_response_code(200);
-            echo json_encode(["message" => "News fetched Successfully", "data" => $rows]);
+            echo json_encode(["message" => "News fetched Successfully", "data" => $rows , 'commnents' => $cmtrows]);
 
         }
     }
+
+    public function addCommentForNews($param, $data)
+    {
+        if (!isset($data['user_id']) || !isset($data['content']) || !isset($data['title']) || !isset($data['user_name']) || !isset($data['avatar_url']))
+        {
+            http_response_code(400);
+            echo json_encode(["message" => "Missing user_id, content, title, image_url or name"]);
+            return;
+        }
+
+        // Check news exist
+        $News = new News();
+        $news_id = $param["news_id"];
+
+        $result = $News->get(['news_id' => $news_id], ['news_id'], ['news_id']);
+        if ($result->rowCount() == 0) {
+
+            http_response_code(400);
+            echo json_encode(["message" => "News does not exist"]);
+            die();
+
+        }
+
+        // add news_id into data
+        $data['news_id'] = $param['news_id'];
+
+        $allowedKeys = ['avatar_url' , 'title', 'content' , 'user_name' , 'user_id' , 'news_id'];
+
+        try {
+
+            $NewsComment = new NewsComment();
+            $result = $NewsComment->create(
+                $data,
+                $allowedKeys
+            );
+            
+            http_response_code(200);
+            echo json_encode(["message" => "Comment for News created successfully"]);
+
+        } catch (PDOException $e) {
+
+            echo "Unknown error in (comment for news) NewsController:: addNews: " . $e->getMessage();
+            die();
+            
+        }
+    }
+ 
 
     public function addNews($param, $data)
     {

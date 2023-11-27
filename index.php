@@ -79,10 +79,10 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
     $r->addGroup('/{group:news}', function (FastRoute\RouteCollector $r) {
         $r->addRoute('GET', '',  'getNews'); // Done  
         $r->addRoute('GET', '/{news_id:\d+}',   'getSingleNew');    // Done
-        $r->addRoute('POST', '', ['requireAdmin', 'addNews']);  // Done     
-        $r->addRoute('PATCH', '/{news_id:\d+}', ['requireAdmin', 'updateNews']);
-        $r->addRoute('DELETE', '/{news_id:\d+}', ['requireAdmin', 'deleteNews']);
-        $r->addRoute('POST', '/{id:\d+}/comment', ['requireLogin', 'commentNews']);
+        $r->addRoute('POST', '', ['requireAdmin', 'addNews']);    // Done     
+        $r->addRoute('PATCH', '/{news_id:\d+}', ['requireAdmin', 'updateNews']);     // Done
+        $r->addRoute('DELETE', '/{news_id:\d+}', ['requireAdmin', 'deleteNews']);   // Done
+        $r->addRoute('POST', '/{news_id:\d+}/comment', ['requireLogin', 'addCommentForNews']);      // Done
     });
 
     // Promotion Group
