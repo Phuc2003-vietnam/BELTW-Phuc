@@ -8,7 +8,7 @@ require_once './models/User.php';
 
 class Middleware
 {
-    public static function requireLogin(&$vars)
+    public static function requireLogin(&$vars)         // passed by reference &vars
     {
         if (!isset($_SERVER['HTTP_AUTHORIZATION'])) {
             http_response_code(401);
@@ -47,9 +47,9 @@ class Middleware
                 ]);
                 die();
             }
-
+            
             $vars['user'] = [
-                'id' => $row['id'],
+                'user_id' => $row['user_id'],
                 'email' => $row['email'],
                 'role' => $row['role']
             ];
