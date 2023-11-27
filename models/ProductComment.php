@@ -58,4 +58,22 @@ class ProductComment
             echo "Unknown error in product_comments::create: " . $e->getMessage();
         }
     }
+
+     public function delete($comment_id)
+    {
+        global $connection;
+
+        $query = "DELETE FROM product_comments WHERE comment_id = '$comment_id'";
+   
+        try {
+
+            $result = $connection->query($query);
+            return $result;
+
+        } catch (PDOException $e) {
+
+            echo "Unknown error in product_Comments::delete: " . $e->getMessage();
+
+        }
+    }
 }

@@ -57,13 +57,14 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
     });
     // Product Group
     $r->addGroup('/{group:product}', function (FastRoute\RouteCollector $r) {
-        $r->addRoute('GET', '', 'getProducts');             //xong , can get all or get single by name , category,order_by        
+        $r->addRoute('GET', '', 'getProducts');  //xong , can get all or get single by name , category,order_by        
         $r->addRoute('GET', '/{id:\d+}', 'getSingleProduct');
         $r->addRoute('POST', '', ['requireAdmin', 'addProduct']); //xong
         $r->addRoute('PATCH', '/{id:\d+}', ['requireAdmin', 'updateProduct']);  //xong
         $r->addRoute('DELETE', '', ['requireAdmin', 'deleteProduct']); //xong
-        $r->addRoute('POST', '/{id:\d+}/comment', ['requireLogin', 'commentProduct']);
-        $r->addRoute('POST', '/{id:\d+}/rate', ['requireLogin', 'rateProduct']);
+        $r->addRoute('POST', '/{product_id:\d+}/comment', ['requireLogin', 'commentProduct']);   // Done
+        $r->addRoute('DELETE', '/deletecomment/{comment_id:\d+}', ['requireLogin', 'deleteCommentProduct']);   // Done
+        $r->addRoute('POST', '/{id:\d+}/rate', ['requireLogin', 'rateProduct']); 
         $r->addRoute('POST', '/{id:\d+}/category', ['requireAdmin', 'addProductCategory']);
         $r->addRoute('DELETE', '/{id:\d+}/category', ['requireAdmin', 'deleteProductCategory']);
     });
