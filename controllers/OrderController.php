@@ -1,13 +1,15 @@
 <?php
 
 require_once './models/Product.php';
+require_once './models/Order.php';
+
 // require_once './models/UserInfo.php';
 // require_once './models/Category.php';
 // require_once './models/ProductRating.php';
 // require_once './models/ProductComment.php';
 // require_once './models/ProductCategory.php';
 
-class ProductController
+class OrderController
 {
     /////////////////////////////////////////////////////////////////////////////////////
     // Get Products
@@ -82,20 +84,37 @@ class ProductController
     }
 
     /////////////////////////////////////////////////////////////////////////////////////
-    // Create Product
+    // GET BUYING ORDER BASED ON $user_id and order_status =>each user have different result
     /////////////////////////////////////////////////////////////////////////////////////
-    public function addProduct($param, $data)
+   
+    public function get_buying_order($user_id){
+        $order = new Order();
+
+        // Get the order with buying status to process
+        $result =$order->get_buying_order($user_id);
+        if ($result->rowCount() == 0) {
+            //TODO : create new order with buying status and return the order_id
+        $order_id = $order->create_buying_order($user_id);
+        }else{
+            $rows = $result->fetchAll(PDO::FETCH_ASSOC);
+            $order_id=$rows[0]["order_id"];
+        }         
+       return $order_id;
+    } 
+      /////////////////////////////////////////////////////////////////////////////////////
+    // ADD  Product to Cart : First will get the buying_order then create order_detail , if cant find , it will create
+    // a new buying order 
+    /////////////////////////////////////////////////////////////////////////////////////
+    public function addProductToCart($param, $data)
     {
         // Checking body data
         if (
-            !isset($data['product_name'])
-            || !isset($data['price'])
-            || !isset($data['description'])
-            || !isset($data['category'])
-            || !isset($data['size'])    
+            !isset($data['product_id'])
+            || !isset($data['size'])
             || !isset($data['quantity'])
-            || !isset($data['color'])
-            || !isset($data['thumbnail'])
+            || !isset($data['price'])
+            || !isset($data['product_name'])
+            
         ) {
             http_response_code(400);
             echo json_encode(["message" => "Missing name, desciption, price, quantity or at least 1 thumbnail"]);
@@ -104,20 +123,71 @@ class ProductController
         try {
             $product = new Product();
 
+            // Check if product exist
+            $result = $product->get(['product_id' => $data['product_id']], ['product_id'], ['product_id']);
+            if ($result->rowCount() == 0) {
+                http_response_code(400);
+                echo json_encode(["message" => "Product does not exist"]);
+                die();
+            }
             // Create product
-            $result = $product->create(
-                $data,
-                ['product_name', 'description', 'size', 'price', 'quantity', 'color','thumbnail','category','discount']
-            );
+            
+            $order = new Order();
+            $order_id=$this->get_buying_order($param["user"]["user_id"]); // in same class , must use $this to call function
+            $result = $order->create_order_detail($order_id,$data['product_id'],$data['size'],$data['quantity'],$data['price'],$data['product_name']);
 
             http_response_code(200);
-            echo json_encode(["message" => "Product created successfully"]);
+            echo json_encode(["message" => "Add To  Cart Successfully"]);
         } catch (PDOException $e) {
             echo "Unknown error in ProductController::addProduct: " . $e->getMessage();
             die();
         }
     }
+       /////////////////////////////////////////////////////////////////////////////////////
+    // GET CART with order_detail based on user__id and superTotalMoney
+    /////////////////////////////////////////////////////////////////////////////////////
+    public function getCart($param, $data)
+    {
+        try {
+            $order = new Order();
+            $order_id=$this->get_buying_order($param["user"]["user_id"]); 
+            $cart=$order->getCart($order_id); // in same class , must use $this to call function
+            http_response_code(200);
+            echo json_encode(["message" => "Get Cart Successfully","data" => $cart]);
+        } catch (PDOException $e) {
+            echo "Unknown error in ProductController::addProduct: " . $e->getMessage();
+            die();
+        }
+    }
+    public function deleteProductInCart($param, $data)
+    {
+        // Checking body data
+        if (
+            !isset($data['order_detail_id'])
+        ) {
+            http_response_code(400);
+            echo json_encode(["message" => "Missing order_detail_id"]);
+            return;
+        }
+        try {
+            // delete product in cart
+            
+            $order = new Order();
+            $result = $order->delete_product_in_cart($data['order_detail_id']);
 
+            http_response_code(200);
+            echo json_encode(["message" => "Delete Item In Cart Successfully"]);
+        } catch (PDOException $e) {
+            echo "Unknown error in ProductController::addProduct: " . $e->getMessage();
+            die();
+        }
+    }
+    public function create_order(){
+        
+    }
+    public function create_order_details(){
+        
+    }
     /////////////////////////////////////////////////////////////////////////////////////
     // Update Product
     /////////////////////////////////////////////////////////////////////////////////////
@@ -159,15 +229,14 @@ class ProductController
             $product = new Product();
 
             // Check if product exist
-            $result = $product->getEasy($data['product_id']);
+            $result = $product->get(['product_id' => $param['id']], ['product_id'], ['product_id']);
             if ($result->rowCount() == 0) {
                 http_response_code(400);
                 echo json_encode(["message" => "Product does not exist"]);
                 die();
             }
-            $row = $result->fetch(PDO::FETCH_ASSOC);
             // Delete product
-            $product->delete($data['product_id']);
+            $product->delete($param['id']);
             //Not yet handle delete comment
             http_response_code(200);
             echo json_encode(["message" => "Product deleted successfully"]);
