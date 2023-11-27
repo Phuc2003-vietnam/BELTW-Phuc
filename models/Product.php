@@ -45,6 +45,7 @@ class Product
                     $conditions[] = "Products.$key=$value";
             endswitch;
         }
+        
         //get all the product base on condition and include thumbnail and sizes
         $whereClause = !empty($conditions) ? 'WHERE ' . implode(' AND ', $conditions) : '';
         $query = "  SELECT Products.*,

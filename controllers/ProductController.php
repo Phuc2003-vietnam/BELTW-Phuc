@@ -241,7 +241,7 @@ class ProductController
         }
 
         try{
-
+            
             $ProductComment->delete($comment_id);
             http_response_code(200);
             echo json_encode(["message" => "Product_Comment deleted successfully"]);
