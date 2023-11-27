@@ -19,10 +19,10 @@ class News
         foreach ($queryParams as $key => $value) {
             $conditions[] = "$key = '$value'";
         }
+        
         $whereClause = !empty($conditions) ? 'WHERE ' . implode(' AND ', $conditions) : '';
 
         $query = "SELECT $selectClause FROM News $whereClause";
-        echo  "get News query : " . $query;
 
         try {
             $result = $connection->query($query);

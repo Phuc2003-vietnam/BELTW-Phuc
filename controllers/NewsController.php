@@ -39,7 +39,7 @@ class NewsController
                     http_response_code(404);
                     echo json_encode(["message" => "No News found"]);
                 } else {
-
+                        
                     http_response_code(200);
                     echo json_encode(["message" => "News fetched Successfully", "data" => $rows]);
                 }
@@ -83,7 +83,32 @@ class NewsController
  
     public function updateNews($param, $data)
     {
-        
+        if (!isset($param['news_id']) || empty($data)) {
+            http_response_code(400);
+            echo json_encode(["message" => "Missing news_id or update data"]);
+            return;
+        }
+
+        $allowedKeys = ['image_url', 'title', 'content'];
+
+        try {
+            $News = new News();
+
+            $newsResult = $News->get(['news_id' => $param['news_id']], ['news_id'], $allowedKeys);
+            if ($newsResult->rowCount() == 0) {
+                http_response_code(404);
+                echo json_encode(["message" => "News not found"]);
+                return;
+            }
+
+            $News->update($param['news_id'], $data, $allowedKeys);
+
+            http_response_code(200);
+            echo json_encode(["message" => "News updated successfully"]);
+        } catch (PDOException $e) {
+            echo "Unknown error in NewsController::updateNews: " . $e->getMessage();
+            die();
+        }
     }
 
     

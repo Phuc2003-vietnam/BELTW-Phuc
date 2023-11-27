@@ -49,7 +49,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
 
     // Product Group
     $r->addGroup('/{group:product}', function (FastRoute\RouteCollector $r) {
-        $r->addRoute('GET', '', 'getProducts');                     //xong , can get all or get single by name , category,order_by        
+        $r->addRoute('GET', '', 'getProducts');             //xong , can get all or get single by name , category,order_by        
         $r->addRoute('GET', '/{id:\d+}', 'getSingleProduct');
         $r->addRoute('POST', '', ['requireAdmin', 'addProduct']); //xong
         $r->addRoute('PATCH', '/{id:\d+}', ['requireAdmin', 'updateProduct']);  //xong
@@ -100,9 +100,9 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
 });
 
 // echo $uri;
-
 // Strip query string (?foo=bar) and decode URI
 // To access query string, use $_GET['foo']
+
 if (false !== $pos = strpos($uri, '?')) {    //may be this is for pathn params
     $uri = substr($uri, 0, $pos);
 }
