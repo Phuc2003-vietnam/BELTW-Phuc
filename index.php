@@ -46,14 +46,22 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
         $r->addRoute('GET', '', ['requireAdmin', 'getUsers']);
         $r->addRoute('GET', '/{id:\d+}', ['requireLogin', 'getSingleUser']);
     });
+    $r->addGroup('/{group:order}', function (FastRoute\RouteCollector $r) {
+        $r->addRoute('GET', '', ['requireAdmin', 'getUsers']);
+        $r->addRoute('GET', '/{id:\d+}', ['requireLogin', 'getSingleUser']);
+        $r->addRoute('POST', '' ,['requireLogin','get_buying_order']);              //xong
+        $r->addRoute('POST', '/add',['requireLogin','addProductToCart']);              //xong
+        $r->addRoute('GET', '/cart', ['requireLogin', 'getCart']);                  //xong
+        $r->addRoute('DELETE', '/cart', ['requireLogin', 'deleteProductInCart']);                  //xong
 
+    });
     // Product Group
     $r->addGroup('/{group:product}', function (FastRoute\RouteCollector $r) {
         $r->addRoute('GET', '', 'getProducts');                     //xong , can get all or get single by name , category,order_by        
         $r->addRoute('GET', '/{id:\d+}', 'getSingleProduct');
         $r->addRoute('POST', '', ['requireAdmin', 'addProduct']); //xong
         $r->addRoute('PATCH', '/{id:\d+}', ['requireAdmin', 'updateProduct']);  //xong
-        $r->addRoute('DELETE', '/{id:\d+}', ['requireAdmin', 'deleteProduct']); //xong
+        $r->addRoute('DELETE', '', ['requireAdmin', 'deleteProduct']); //xong
         $r->addRoute('POST', '/{id:\d+}/comment', ['requireLogin', 'commentProduct']);
         $r->addRoute('POST', '/{id:\d+}/rate', ['requireLogin', 'rateProduct']);
         $r->addRoute('POST', '/{id:\d+}/category', ['requireAdmin', 'addProductCategory']);
@@ -108,7 +116,6 @@ if (false !== $pos = strpos($uri, '?')) {    //may be this is for pathn params
 }
 $uri = rawurldecode($uri);
 
-
 // Route handler
 $routeInfo = $dispatcher->dispatch($httpMethod, $uri);
 // var_dump($routeInfo);
@@ -136,10 +143,15 @@ switch ($routeInfo[0]) {
             // echo   $handler;   
             switch ($function) {
                 case 'requireLogin':
-                    Middleware::requireLogin($vars);
+                    Middleware::requireLogin($vars);   
+                    //$vars passed by reference => get  $vars['user'] = [
+                    //     'user_id' => $row['id'],
+                    //     'email' => $row['email'],
+                    //     'role' => $row['role']
+                    // ];
                     break;
                 case 'requireAdmin':
-                    Middleware::requireAdmin($vars);
+                    Middleware::requireAdmin($vars); //$vars passed by reference 
                     break;
                 default:
                     $controllerName = ucfirst($vars['group']) . 'Controller';

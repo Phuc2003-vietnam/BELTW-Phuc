@@ -66,7 +66,27 @@ class Product
             echo "Unknown error in PRODUCT::get: " . $e->getMessage();
         }
     }
-
+    // getEasy is used to get a product by product_id
+    public function getEasy($product_id)
+    {
+        global $connection;
+        if (
+            empty($product_id)
+        ) {
+            http_response_code(400);
+            echo json_encode(["message" => "Missing product_id"]);
+            return;
+        }
+        $query = "SELECT * FROM PRODUCTS WHERE product_id=$product_id";
+        
+        try{
+            $result = $connection->prepare($query);
+            $result->execute();
+            return $result;
+        }catch (PDOException $e) {
+            echo "Unknown error in PRODUCTS::create: " . $e->getMessage();
+        }
+    }
     public function create($data, $allowedKeys = [])
     {
         global $connection;
@@ -166,7 +186,7 @@ class Product
             echo "Unknown error in PRODUCT::update: " . $e->getMessage();
         }
     }
-
+    //DELETE Product, Size, Thumbnail ,Order_detail
     public function delete($product_id)
     {
         global $connection;
@@ -174,7 +194,7 @@ class Product
         $query = "DELETE FROM PRODUCTS WHERE product_id='$product_id'";
         $query_size_delete= "DELETE FROM SIZES WHERE product_id='$product_id'"; 
         $query_thumbnail_delete= "DELETE FROM THUMBNAILS WHERE product_id=$product_id";     
-
+        $query_order_details_delete= "DELETE FROM ORDER_DETAILS WHERE product_id=$product_id";     
         try {
             //delete shoes
             $result = $connection->prepare($query);
@@ -185,6 +205,9 @@ class Product
             //delete size
             $delete_size = $connection->prepare($query_size_delete);
             $delete_size->execute();
+             //delete order_detail
+             $delete_order_detail = $connection->prepare($query_order_details_delete);
+             $delete_order_detail->execute();
             return $result;
         } catch (PDOException $e) {
             echo "Unknown error in PRODUCT::delete: " . $e->getMessage();
