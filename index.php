@@ -57,13 +57,14 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
     });
     // Product Group
     $r->addGroup('/{group:product}', function (FastRoute\RouteCollector $r) {
-        $r->addRoute('GET', '', 'getProducts');                     //xong , can get all or get single by name , category,order_by        
+        $r->addRoute('GET', '', 'getProducts');  //xong , can get all or get single by name , category,order_by        
         $r->addRoute('GET', '/{id:\d+}', 'getSingleProduct');
         $r->addRoute('POST', '', ['requireAdmin', 'addProduct']); //xong
         $r->addRoute('PATCH', '/{id:\d+}', ['requireAdmin', 'updateProduct']);  //xong
         $r->addRoute('DELETE', '', ['requireAdmin', 'deleteProduct']); //xong
-        $r->addRoute('POST', '/{id:\d+}/comment', ['requireLogin', 'commentProduct']);
-        $r->addRoute('POST', '/{id:\d+}/rate', ['requireLogin', 'rateProduct']);
+        $r->addRoute('POST', '/{product_id:\d+}/comment', ['requireLogin', 'commentProduct']);   // Done
+        $r->addRoute('DELETE', '/deletecomment/{comment_id:\d+}', ['requireLogin', 'deleteCommentProduct']);   // Done
+        $r->addRoute('POST', '/{id:\d+}/rate', ['requireLogin', 'rateProduct']); 
         $r->addRoute('POST', '/{id:\d+}/category', ['requireAdmin', 'addProductCategory']);
         $r->addRoute('DELETE', '/{id:\d+}/category', ['requireAdmin', 'deleteProductCategory']);
     });
@@ -75,15 +76,16 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
         $r->addRoute('DELETE', '/{id:\d+}', ['requireAdmin', 'deleteCategory']);
     });
 
-    // Blog Group
-    $r->addGroup('/{group:blog}', function (FastRoute\RouteCollector $r) {
-        $r->addRoute('GET', '',  'getBlogs');
-        $r->addRoute('GET', '/{id:\d+}', 'getSingleBlog');
-        $r->addRoute('POST', '', ['requireAdmin', 'addBlog']);
-        $r->addRoute('PATCH', '/{id:\d+}', ['requireAdmin', 'updateBlog']);
-        $r->addRoute('DELETE', '/{id:\d+}', ['requireAdmin', 'deleteBlog']);
-        $r->addRoute('POST', '/{id:\d+}/comment', ['requireLogin', 'commentBlog']);
-    });
+    // News Group
+    $r->addGroup('/{group:news}', function (FastRoute\RouteCollector $r) {
+        $r->addRoute('GET', '',  'getNews'); // Done  
+        $r->addRoute('GET', '/{news_id:\d+}',   'getSingleNew');    // Done
+        $r->addRoute('POST', '', ['requireAdmin', 'addNews']);    // Done     
+        $r->addRoute('PATCH', '/{news_id:\d+}', ['requireAdmin', 'updateNews']);     // Done
+        $r->addRoute('DELETE', '/{news_id:\d+}', ['requireAdmin', 'deleteNews']);   // Done
+        $r->addRoute('POST', '/{news_id:\d+}/comment', ['requireLogin', 'addCommentForNews']);      // Done
+        $r->addRoute('DELETE', '/deletecomment/{comment_id:\d+}', ['requireLogin', 'deleteCommentForNews']);      // Done
+    }); 
 
     // Promotion Group
     $r->addGroup('/{group:promotion}', function (FastRoute\RouteCollector $r) {
@@ -108,9 +110,9 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
 });
 
 // echo $uri;
-
 // Strip query string (?foo=bar) and decode URI
 // To access query string, use $_GET['foo']
+
 if (false !== $pos = strpos($uri, '?')) {    //may be this is for pathn params
     $uri = substr($uri, 0, $pos);
 }

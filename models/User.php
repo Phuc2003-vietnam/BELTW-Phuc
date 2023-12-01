@@ -14,8 +14,8 @@ class User
         //array_flip : đổi vị trí của key và value
         // array_intersect_key: lấy các element trong $queryParams sao cho các key trong $queryParams tồn tại trong array_flip($allowedKeys)
         //queryParams => dùng cho where clause kiểu để phân biệt, allowedKeys chỉ cần set key giống query param, $select lấy các field nào ra 
-        $selectClause = empty($select) ? '*' : implode(', ', $select); //implode is used to create string from array
-        $conditions = [];                   //declare array
+        $selectClause = empty($select) ?  '*' : implode(', ', $select); //implode is used to create string from array
+        $conditions = [];                  //declare array
         foreach ($queryParams as $key => $value) {
             $conditions[] = "$key='$value'";    //push "..." to $conditions
         }
