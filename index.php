@@ -45,6 +45,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
     $r->addGroup('/{group:user}', function (FastRoute\RouteCollector $r) {
         $r->addRoute('GET', '', ['requireAdmin', 'getUsers']);
         $r->addRoute('GET', '/{id:\d+}', ['requireLogin', 'getSingleUser']);
+        $r->addRoute('GET', '/buying-history', ['requireLogin', 'getBuyingHistory']); //xong
     });
     $r->addGroup('/{group:order}', function (FastRoute\RouteCollector $r) {
         $r->addRoute('GET', '', ['requireAdmin', 'getUsers']);

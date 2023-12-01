@@ -86,7 +86,7 @@ class Order
             echo "Unknown error in PRODUCT::get: " . $e->getMessage();
         }
     } 
-    //GET the Order of a user with buying status
+    //GET the Order of a user with buying status based on $user_id
     public function get_buying_order($user_id){
         global $connection;
         $query= "SELECT * FROM ORDERS WHERE order_status ='buying' AND user_id=$user_id";
@@ -114,6 +114,23 @@ class Order
             echo "Unknown error in PRODUCT::get: " . $e->getMessage();
         }
     } 
+    //CREATE an Order , meaning you get the buying order and add stuffs
+    public function create_order($user_id,$order_id,$email,$user_name,$country,$province,$city,$zip_code,$address,$phone_number,
+    $card_name,$card_number,$card_expiration,$vcc){
+        global $connection;
+        $query= "UPDATE ORDERS
+        SET order_status=SHIPPING,user_id=$user_id,email=$email,user_name=$user_name,user_name=$user_name,province=$province,
+        city=$city,zip_code=$zip_code,address=$address,phone_number=$phone_number,card_name=$card_name,
+        card_number=$card_number,card_expiration=$card_expiration,vcc=$vcc
+        WHERE order_id=$order_id";
+        try {
+            
+            $result = $connection->prepare($query);
+            $result->execute();
+        } catch (PDOException $e) {
+            echo "Unknown error in PRODUCT::get: " . $e->getMessage();
+        }
+    }
     //DELETE an item in cart
     public function delete_product_in_cart($order_detail_id){
         global $connection;
@@ -127,10 +144,10 @@ class Order
             echo "Unknown error in PRODUCT::get: " . $e->getMessage();
         }
     }
-    public function create_order_detail($order_id,$product_id,$size,$quantity,$price,$product_name){
+    public function create_order_detail($order_id,$product_id,$size,$quantity,$price,$product_name,$thumbnail,$color){
         global $connection;
         $totalMoney=$price * $quantity;
-        $query= "INSERT INTO ORDER_DETAILS(order_id,product_id,size,quantity,price,total_money,product_name) VALUES($order_id,$product_id,$size,$quantity,$price,$totalMoney,'$product_name')";
+        $query= "INSERT INTO ORDER_DETAILS(order_id,product_id,size,quantity,price,total_money,product_name,thumbnail,color) VALUES($order_id,$product_id,$size,$quantity,$price,$totalMoney,'$product_name','$thumbnai','$color')";
         try {
             $result = $connection->prepare($query);
             $result->execute();

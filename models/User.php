@@ -5,6 +5,33 @@ $connection = Database::getInstance()->getConnection();
 
 class User
 {
+
+    //GET history order with status != buying . 
+    public function get_buying_history($user_id){
+        global $connection;
+        $query= "SELECT order_id,user_id,order_status,user_name FROM ORDERS WHERE order_status !='buying' AND user_id=$user_id ORDER BY created_at DESC";
+        try {
+            
+            $result = $connection->prepare($query);
+            $result->execute();
+            //GET ALL ORDERS != BUYING, lấy thằng gần nhất đang shipping trc 
+            $row["order"] = $result->fetchALL(PDO::FETCH_ASSOC);
+            for($i=0;$i<count($row["order"]);$i++)
+            {
+                $order_id=$row["order"][$i]['order_id'];
+                //GET order_details in each order
+                $query_order_detail="SELECT * FROM Order_Details WHERE order_id=$order_id";
+                $order_detail = $connection->prepare($query_order_detail);
+                $order_detail->execute();
+                //assign order_details to items
+                $row["order"][$i]["items"]=$order_detail->fetchALL(PDO::FETCH_ASSOC);
+                //lay cai order_detail rồi tạo 1 biến array gán vào
+            }
+            return $row;
+        } catch (PDOException $e) {
+            echo "Unknown error in PRODUCT::get: " . $e->getMessage();
+        }
+    } 
     public function get($queryParams, $allowedKeys = [], $select = [])
     {
         global $connection;

@@ -84,7 +84,7 @@ class OrderController
     }
 
     /////////////////////////////////////////////////////////////////////////////////////
-    // GET BUYING ORDER BASED ON $user_id and order_status =>each user have different result
+    // GET BUYING ORDER BASED ON $user_id and order_status = BUYING =>each user have different result
     /////////////////////////////////////////////////////////////////////////////////////
    
     public function get_buying_order($user_id){
@@ -111,6 +111,8 @@ class OrderController
         if (
             !isset($data['product_id'])
             || !isset($data['size'])
+            || !isset($data['color'])
+            || !isset($data['thumbnail'])
             || !isset($data['quantity'])
             || !isset($data['price'])
             || !isset($data['product_name'])
@@ -134,7 +136,7 @@ class OrderController
             
             $order = new Order();
             $order_id=$this->get_buying_order($param["user"]["user_id"]); // in same class , must use $this to call function
-            $result = $order->create_order_detail($order_id,$data['product_id'],$data['size'],$data['quantity'],$data['price'],$data['product_name']);
+            $result = $order->create_order_detail($order_id,$data['product_id'],$data['size'],$data['quantity'],$data['price'],$data['product_name'],$data['thumbnail'],$data['color']);
 
             http_response_code(200);
             echo json_encode(["message" => "Add To  Cart Successfully"]);
@@ -182,8 +184,34 @@ class OrderController
             die();
         }
     }
-    public function create_order(){
-        
+    /////////////////////////////////////////////////////////////////////////////////////
+    // CREATE ORDER : First get the buying order of a customer => use get_buying_order
+    // then add new fields to the existing ORDER record , remember to calculate totalmoney and total quantity
+    /////////////////////////////////////////////////////////////////////////////////////
+    public function create_order($param, $data){
+         // Checking body data
+         if (
+            !isset($data['email'])
+            || !isset($data['user_name'])
+            || !isset($data['country'])
+            || !isset($data['province'])
+            || !isset($data['city'])
+            || !isset($data['zip_code'])
+            || !isset($data['address'])
+            || !isset($data['phone_number'])
+            || !isset($data['card_name'])
+            || !isset($data['card_number'])
+            || !isset($data['card_expiration'])
+            || !isset($data['vcc'])
+        ){
+            http_response_code(400);
+            echo json_encode(["message" => "You miss some values"]);
+            return;
+        }
+        $order = new Order();
+        $order_id=$this->get_buying_order($param["user"]["user_id"]);
+        $result = $order->create_order($user_id,$order_id,$data['email'],$data['user_name'],$data['country'],$data['province'],$data['city'],
+        $data['zip_code'],$data['address'],$data['phone_number'],$data['card_name'],$data['card_number'],$data['card_expiration'],$data['vcc']);
     }
     public function create_order_details(){
         
