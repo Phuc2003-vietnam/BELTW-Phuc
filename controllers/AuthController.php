@@ -79,8 +79,6 @@ class AuthController
     /////////////////////////////////////////////////////////////////////////////////////
     public function login($param, $data)
     {
-        echo $_SERVER['HELLO'];
-        echo "OMG";
         // Checking body data
         if (!isset($data['password']) || !isset($data['email'])) {
             http_response_code(400);
