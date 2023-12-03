@@ -9,7 +9,7 @@ class User
     //GET history order with status != buying . 
     public function get_buying_history($user_id){
         global $connection;
-        $query= "SELECT order_id,user_id,order_status,user_name FROM ORDERS WHERE order_status !='buying' AND user_id=$user_id ORDER BY created_at DESC";
+        $query= "SELECT order_id,user_id,order_status,user_name FROM Orders WHERE order_status !='buying' AND user_id=$user_id ORDER BY created_at DESC";
         try {
             
             $result = $connection->prepare($query);
@@ -47,7 +47,7 @@ class User
             $conditions[] = "$key='$value'";    //push "..." to $conditions
         }
         $whereClause = !empty($conditions) ? 'WHERE ' . implode(' AND ', $conditions) : '';
-        $query = "SELECT $selectClause FROM USERS $whereClause";
+        $query = "SELECT $selectClause FROM Users $whereClause";
         // echo $query;
         try {
             $result = $connection->prepare($query);
@@ -71,7 +71,7 @@ class User
 
         $keys = array_keys($data);
         $values = array_values($data);
-        $query = "INSERT INTO USERS (" . implode(", ", $keys) . ") VALUES ('" . implode("', '", $values) . "')";
+        $query = "INSERT INTO Users (" . implode(", ", $keys) . ") VALUES ('" . implode("', '", $values) . "')";
 
         try {
             $result = $connection->prepare($query);
@@ -96,7 +96,7 @@ class User
             $updates[] = "$key='$value'";
         }
 
-        $query = "UPDATE USERS SET " . implode(", ", $updates) . " WHERE id='$id'";
+        $query = "UPDATE Users SET " . implode(", ", $updates) . " WHERE id='$id'";
 
         try {
             $result = $connection->prepare($query);
@@ -113,7 +113,7 @@ class User
     {
         global $connection;
 
-        $query = "DELETE FROM USERS WHERE id='$id'";
+        $query = "DELETE FROM Users WHERE id='$id'";
 
         try {
             $result = $connection->prepare($query);
@@ -130,7 +130,7 @@ class User
     {
         global $connection;
 
-        $query = "SELECT USERS.id, email, name, role FROM USERS INNER JOIN USER_INFO ON USERS.id = user_info.id";
+        $query = "SELECT USERS.id, email, name, role FROM Users INNER JOIN USER_INFO ON USERS.id = user_info.id";
 
         try {
             $result = $connection->prepare($query);

@@ -68,7 +68,7 @@ class Order
     }
     public function getCart($order_id){
         global $connection;
-        $query= "SELECT * FROM ORDER_DETAILS WHERE order_id =$order_id";
+        $query= "SELECT * FROM Order_Details WHERE order_id =$order_id";
         try {
             
             $result = $connection->prepare($query);
@@ -89,7 +89,7 @@ class Order
     //GET ORDER LIST for admin 
     public function getOrderList(){
         global $connection;
-        $query= "SELECT user_name,order_id,created_at,total_money,order_status FROM ORDERS";
+        $query= "SELECT user_name,order_id,created_at,total_money,order_status FROM Orders";
         try {
             
             $result = $connection->prepare($query);
@@ -105,7 +105,7 @@ class Order
     //GET the Order of a user with buying status based on $user_id
     public function get_buying_order($user_id){
         global $connection;
-        $query= "SELECT * FROM ORDERS WHERE order_status ='buying' AND user_id=$user_id";
+        $query= "SELECT * FROM Orders WHERE order_status ='buying' AND user_id=$user_id";
         try {
             
             $result = $connection->prepare($query);
@@ -132,7 +132,7 @@ class Order
     //CREATE buying order if there is not buying status
     public function create_buying_order($user_id){
         global $connection;
-        $query= "INSERT INTO ORDERS(order_status,user_id) VALUES('buying',$user_id)";
+        $query= "INSERT INTO Orders(order_status,user_id) VALUES('buying',$user_id)";
         try {
             
             $result = $connection->prepare($query);
@@ -149,7 +149,7 @@ class Order
         global $connection;
         $getTotalMoney=$this->getCart($order_id);
         $total_money=$getTotalMoney[count($getTotalMoney)-1]["superTotalMoney"];
-        $query = "UPDATE ORDERS 
+        $query = "UPDATE Orders 
         SET order_status='SHIPPING', user_id=$user_id, email='$email', user_name='$user_name',country='$country',province='$province',
         city='$city',zip_code='$zip_code',address='$address',phone_number='$phone_number',card_name='$card_name',
         card_number='$card_number',card_expiration='$card_expiration',vcc='$vcc',total_money=$total_money
@@ -167,7 +167,7 @@ class Order
     //DELETE an item in cart
     public function delete_product_in_cart($order_detail_id){
         global $connection;
-        $query= "DELETE FROM ORDER_DETAILS WHERE order_detail_id=$order_detail_id";
+        $query= "DELETE FROM Order_Details WHERE order_detail_id=$order_detail_id";
         try {
             
             $result = $connection->prepare($query);
@@ -180,7 +180,7 @@ class Order
     public function create_order_detail($order_id,$product_id,$size,$quantity,$price,$product_name,$thumbnail,$color){
         global $connection;
         $totalMoney=$price * $quantity;
-        $query= "INSERT INTO ORDER_DETAILS(order_id,product_id,size,quantity,price,total_money,product_name,thumbnail,color) VALUES($order_id,$product_id,$size,$quantity,$price,$totalMoney,'$product_name','$thumbnai','$color')";
+        $query= "INSERT INTO Order_Details(order_id,product_id,size,quantity,price,total_money,product_name,thumbnail,color) VALUES($order_id,$product_id,$size,$quantity,$price,$totalMoney,'$product_name','$thumbnai','$color')";
         try {
             $result = $connection->prepare($query);
             $result->execute();
@@ -205,14 +205,14 @@ class Order
         
         $keys = array_keys($data);
         $values = array_values($data);
-        $query = "INSERT INTO PRODUCTS (" . implode(", ", $keys) . ") VALUES ('" . implode("', '", $values) . "')";
+        $query = "INSERT INTO Products (" . implode(", ", $keys) . ") VALUES ('" . implode("', '", $values) . "')";
         try {
             $result = $connection->prepare($query);
             $result->execute();
             $lastInsertedId = $connection->lastInsertId();
             //Store the thumbnail
             foreach ($thumbnail as $value) {
-            $query_thumbnail= "INSERT INTO THUMBNAILS (product_id,thumbnail) VALUES (" . $lastInsertedId . ",'" . $value . "')" ;       // dont forget that thumnail is string so must add ' '
+            $query_thumbnail= "INSERT INTO Thumbnails (product_id,thumbnail) VALUES (" . $lastInsertedId . ",'" . $value . "')" ;       // dont forget that thumnail is string so must add ' '
 
              $a = $connection->prepare($query_thumbnail);
              $a->execute();
@@ -220,7 +220,7 @@ class Order
             
             // Store the size
             foreach ($size as $value) {
-                $query_size= "INSERT INTO SIZES (product_id,size) VALUES (" . $lastInsertedId . "," . $value . ")" ;
+                $query_size= "INSERT INTO Sizes (product_id,size) VALUES (" . $lastInsertedId . "," . $value . ")" ;
                  $b = $connection->prepare($query_size);
                  $b->execute();
                 }
@@ -248,7 +248,7 @@ class Order
             $updates[] = "$key='$value'";
         }
         
-        $query = "UPDATE PRODUCTS SET " . implode(", ", $updates) . " WHERE product_id=$product_id";
+        $query = "UPDATE Products SET " . implode(", ", $updates) . " WHERE product_id=$product_id";
         
 
         try {
@@ -257,27 +257,27 @@ class Order
             $result->execute();
             
             //delete the thumbnail
-            $query_thumbnail_delete= "DELETE FROM THUMBNAILS WHERE product_id=$product_id";     // dont forget that thumnail is string so must add ' '
+            $query_thumbnail_delete= "DELETE FROM Thumbnails WHERE product_id=$product_id";     // dont forget that thumnail is string so must add ' '
     
             $delete_thumbnail = $connection->prepare($query_thumbnail_delete);
             $delete_thumbnail->execute();
 
             //update the thumbnail     
             foreach ($thumbnail as $value) {
-                $query_thumbnail_update= "INSERT INTO THUMBNAILS (product_id,thumbnail) VALUES ($product_id,'$value')" ;       // dont forget that thumnail is string so must add ' '
+                $query_thumbnail_update= "INSERT INTO Thumbnails (product_id,thumbnail) VALUES ($product_id,'$value')" ;       // dont forget that thumnail is string so must add ' '
     
                  $update_thumbnail = $connection->prepare($query_thumbnail_update);
                  $update_thumbnail->execute();
                 }
             // //delete the size
-            $query_size_delete= "DELETE FROM SIZES WHERE product_id='$product_id'";     // dont forget that thumnail is string so must add ' '
+            $query_size_delete= "DELETE FROM Sizes WHERE product_id='$product_id'";     // dont forget that thumnail is string so must add ' '
     
             $delete_size = $connection->prepare($query_size_delete);
             $delete_size->execute();
 
             //update the size     
             foreach ($size as $value) {
-                $query_size_update= "INSERT INTO SIZES (product_id,size) VALUES ($product_id,$value)" ;
+                $query_size_update= "INSERT INTO Sizes (product_id,size) VALUES ($product_id,$value)" ;
                 
                 $update_size = $connection->prepare($query_size_update);
                 $update_size->execute();
@@ -294,9 +294,9 @@ class Order
     {
         global $connection;
 
-        $query = "DELETE FROM PRODUCTS WHERE product_id='$product_id'";
-        $query_size_delete= "DELETE FROM SIZES WHERE product_id='$product_id'"; 
-        $query_thumbnail_delete= "DELETE FROM THUMBNAILS WHERE product_id=$product_id";     
+        $query = "DELETE FROM Products WHERE product_id='$product_id'";
+        $query_size_delete= "DELETE FROM Sizes WHERE product_id='$product_id'"; 
+        $query_thumbnail_delete= "DELETE FROM Thumbnails WHERE product_id=$product_id";     
 
         try {
             //delete shoes

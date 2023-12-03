@@ -50,7 +50,7 @@ class Product
         $query = "  SELECT Products.*,
                         GROUP_CONCAT(DISTINCT Thumbnails.thumbnail) AS combined_thumbnails,
                         GROUP_CONCAT(DISTINCT Sizes.size) AS combined_sizes
-                    FROM PRODUCTS 
+                    FROM Products 
                     LEFT JOIN Thumbnails ON Products.product_id = Thumbnails.product_id
                     LEFT JOIN Sizes ON Products.product_id = Sizes.product_id
                     $whereClause
@@ -77,7 +77,7 @@ class Product
             echo json_encode(["message" => "Missing product_id"]);
             return;
         }
-        $query = "SELECT * FROM PRODUCTS WHERE product_id=$product_id";
+        $query = "SELECT * FROM Products WHERE product_id=$product_id";
         
         try{
             $result = $connection->prepare($query);
@@ -102,14 +102,14 @@ class Product
         
         $keys = array_keys($data);
         $values = array_values($data);
-        $query = "INSERT INTO PRODUCTS (" . implode(", ", $keys) . ") VALUES ('" . implode("', '", $values) . "')";
+        $query = "INSERT INTO Products (" . implode(", ", $keys) . ") VALUES ('" . implode("', '", $values) . "')";
         try {
             $result = $connection->prepare($query);
             $result->execute();
             $lastInsertedId = $connection->lastInsertId();
             //Store the thumbnail
             foreach ($thumbnail as $value) {
-            $query_thumbnail= "INSERT INTO THUMBNAILS (product_id,thumbnail) VALUES (" . $lastInsertedId . ",'" . $value . "')" ;       // dont forget that thumnail is string so must add ' '
+            $query_thumbnail= "INSERT INTO Thumbnails (product_id,thumbnail) VALUES (" . $lastInsertedId . ",'" . $value . "')" ;       // dont forget that thumnail is string so must add ' '
 
              $a = $connection->prepare($query_thumbnail);
              $a->execute();
@@ -117,7 +117,7 @@ class Product
             
             // Store the size
             foreach ($size as $value) {
-                $query_size= "INSERT INTO SIZES (product_id,size) VALUES (" . $lastInsertedId . "," . $value . ")" ;
+                $query_size= "INSERT INTO Sizes (product_id,size) VALUES (" . $lastInsertedId . "," . $value . ")" ;
                  $b = $connection->prepare($query_size);
                  $b->execute();
                 }
@@ -145,7 +145,7 @@ class Product
             $updates[] = "$key='$value'";
         }
         
-        $query = "UPDATE PRODUCTS SET " . implode(", ", $updates) . " WHERE product_id=$product_id";
+        $query = "UPDATE Products SET " . implode(", ", $updates) . " WHERE product_id=$product_id";
         
 
         try {
@@ -154,27 +154,27 @@ class Product
             $result->execute();
             
             //delete the thumbnail
-            $query_thumbnail_delete= "DELETE FROM THUMBNAILS WHERE product_id=$product_id";     // dont forget that thumnail is string so must add ' '
+            $query_thumbnail_delete= "DELETE FROM Thumbnails WHERE product_id=$product_id";     // dont forget that thumnail is string so must add ' '
     
             $delete_thumbnail = $connection->prepare($query_thumbnail_delete);
             $delete_thumbnail->execute();
 
             //update the thumbnail     
             foreach ($thumbnail as $value) {
-                $query_thumbnail_update= "INSERT INTO THUMBNAILS (product_id,thumbnail) VALUES ($product_id,'$value')" ;       // dont forget that thumnail is string so must add ' '
+                $query_thumbnail_update= "INSERT INTO Thumbnails (product_id,thumbnail) VALUES ($product_id,'$value')" ;       // dont forget that thumnail is string so must add ' '
     
                  $update_thumbnail = $connection->prepare($query_thumbnail_update);
                  $update_thumbnail->execute();
                 }
             // //delete the size
-            $query_size_delete= "DELETE FROM SIZES WHERE product_id='$product_id'";     // dont forget that thumnail is string so must add ' '
+            $query_size_delete= "DELETE FROM Sizes WHERE product_id='$product_id'";     // dont forget that thumnail is string so must add ' '
     
             $delete_size = $connection->prepare($query_size_delete);
             $delete_size->execute();
 
             //update the size     
             foreach ($size as $value) {
-                $query_size_update= "INSERT INTO SIZES (product_id,size) VALUES ($product_id,$value)" ;
+                $query_size_update= "INSERT INTO Sizes (product_id,size) VALUES ($product_id,$value)" ;
                 
                 $update_size = $connection->prepare($query_size_update);
                 $update_size->execute();
@@ -191,10 +191,10 @@ class Product
     {
         global $connection;
 
-        $query = "DELETE FROM PRODUCTS WHERE product_id='$product_id'";
-        $query_size_delete= "DELETE FROM SIZES WHERE product_id='$product_id'"; 
-        $query_thumbnail_delete= "DELETE FROM THUMBNAILS WHERE product_id=$product_id";     
-        $query_order_details_delete= "DELETE FROM ORDER_DETAILS WHERE product_id=$product_id";     
+        $query = "DELETE FROM Products WHERE product_id='$product_id'";
+        $query_size_delete= "DELETE FROM Sizes WHERE product_id='$product_id'"; 
+        $query_thumbnail_delete= "DELETE FROM Thumbnails WHERE product_id=$product_id";     
+        $query_order_details_delete= "DELETE FROM Order_Details WHERE product_id=$product_id";     
         try {
             //delete shoes
             $result = $connection->prepare($query);
