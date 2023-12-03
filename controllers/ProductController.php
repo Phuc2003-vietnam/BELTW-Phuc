@@ -21,7 +21,6 @@ class ProductController
         }
         try {
             $product = new Product();
-
             // Get product by name if exist
             $result = $product->get(
                 $queryParams,
@@ -30,6 +29,18 @@ class ProductController
             );
 
             $rows = $result->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($rows as &$row) {
+                $thumbnails = explode(',', $row['combined_thumbnails']);
+                $sizes = explode(',', $row['combined_sizes']);
+            
+                // Add thumbnails and sizes to their respective arrays
+                $row["thumbnails"] = $thumbnails;
+                $row["sizes"] = $sizes;
+                //delete fields
+                unset($row['combined_thumbnails']);
+                unset($row['combined_sizes']);
+            }
+            
 
             http_response_code(200);
             echo json_encode(["message" => "Product List fetched", "data" => $rows]);
@@ -51,7 +62,7 @@ class ProductController
             $productComment = new ProductComment();
 
             // Get product
-            $result = $product->get(['id' => $param['id']], ['id']);
+            $result = $product->get(['product_id' => $param['id']], ['product_id']);
             if ($result->rowCount() == 0) {
                 http_response_code(400);
                 echo json_encode(["message" => "Product does not exist"]);
@@ -74,7 +85,7 @@ class ProductController
             // $row['rating_count'] = $rating['rating_count'];
 
             http_response_code(200);
-            echo json_encode(["message" => "Blog fetched", "data" => $row]);
+            echo json_encode(["message" => "Single Product fetched", "data" => $row]);
         } catch (PDOException $e) {
             echo "Unknown error in ProductController::getSingleProduct: " . $e->getMessage();
             die();
