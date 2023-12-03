@@ -22,7 +22,7 @@ class ProductComment
         
         $whereClause = !empty($conditions) ? 'WHERE ' . implode(' AND ', $conditions) : '';
 
-        $query = "SELECT $selectClause FROM product_comments $whereClause ORDER BY product_comments.updated_at DESC";
+        $query = "SELECT $selectClause FROM Product_Comments $whereClause ORDER BY Product_Comments.updated_at DESC";
 
         try {
 
@@ -31,7 +31,7 @@ class ProductComment
 
         } catch (PDOException $e) {
 
-            echo "Unknown error in product_comments::get: " . $e->getMessage();
+            echo "Unknown error in Product_Comments::get: " . $e->getMessage();
             
         }
     }
@@ -46,7 +46,7 @@ class ProductComment
         $columns = implode(', ', array_keys($data));
         $values = "'" . implode("', '", $data) . "'";
         
-        $query = "INSERT INTO product_comments ($columns) VALUES ($values)";
+        $query = "INSERT INTO Product_Comments ($columns) VALUES ($values)";
         
         try {
 
@@ -55,7 +55,7 @@ class ProductComment
 
         } catch (PDOException $e) {
 
-            echo "Unknown error in product_comments::create: " . $e->getMessage();
+            echo "Unknown error in Product_Comments::create: " . $e->getMessage();
         }
     }
 
@@ -63,7 +63,7 @@ class ProductComment
     {
         global $connection;
 
-        $query = "DELETE FROM product_comments WHERE comment_id = '$comment_id'";
+        $query = "DELETE FROM Product_Comments WHERE comment_id = '$comment_id'";
    
         try {
 
@@ -72,7 +72,7 @@ class ProductComment
 
         } catch (PDOException $e) {
 
-            echo "Unknown error in product_Comments::delete: " . $e->getMessage();
+            echo "Unknown error in Product_Comments::delete: " . $e->getMessage();
 
         }
     }
