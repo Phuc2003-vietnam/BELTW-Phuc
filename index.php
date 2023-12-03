@@ -49,11 +49,15 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
     });
     $r->addGroup('/{group:order}', function (FastRoute\RouteCollector $r) {
         $r->addRoute('GET', '', ['requireAdmin', 'getUsers']);
+        $r->addRoute('GET', '/order-list', ['requireAdmin', 'getOrderList']);
+        $r->addRoute('PUT', '/order-status', ['requireAdmin', 'editOrderStatus']);
         $r->addRoute('GET', '/{id:\d+}', ['requireLogin', 'getSingleUser']);
         $r->addRoute('POST', '' ,['requireLogin','get_buying_order']);              //xong
-        $r->addRoute('POST', '/add',['requireLogin','addProductToCart']);              //xong
+        $r->addRoute('POST', '/addProductToCart',['requireLogin','addProductToCart']);              //xong
         $r->addRoute('GET', '/cart', ['requireLogin', 'getCart']);                  //xong
         $r->addRoute('DELETE', '/cart', ['requireLogin', 'deleteProductInCart']);                  //xong
+        $r->addRoute('POST', '/cart', ['requireLogin', 'deleteProductInCart']);                  //xong
+        $r->addRoute('POST', '/checkout', ['requireLogin', 'create_order']);                  //xong
 
     });
     // Product Group

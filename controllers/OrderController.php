@@ -87,12 +87,12 @@ class OrderController
     // GET BUYING ORDER BASED ON $user_id and order_status = BUYING =>each user have different result
     /////////////////////////////////////////////////////////////////////////////////////
    
-    public function get_buying_order($user_id){
+    public function get_buying_order($user_id,$createNewBuying){
         $order = new Order();
 
         // Get the order with buying status to process
         $result =$order->get_buying_order($user_id);
-        if ($result->rowCount() == 0) {
+        if ($result->rowCount() == 0  && $createNewBuying==1) {
             //TODO : create new order with buying status and return the order_id
         $order_id = $order->create_buying_order($user_id);
         }else{
@@ -135,7 +135,7 @@ class OrderController
             // Create product
             
             $order = new Order();
-            $order_id=$this->get_buying_order($param["user"]["user_id"]); // in same class , must use $this to call function
+            $order_id=$this->get_buying_order($param["user"]["user_id"],1); // in same class , must use $this to call function
             $result = $order->create_order_detail($order_id,$data['product_id'],$data['size'],$data['quantity'],$data['price'],$data['product_name'],$data['thumbnail'],$data['color']);
 
             http_response_code(200);
@@ -152,12 +152,55 @@ class OrderController
     {
         try {
             $order = new Order();
-            $order_id=$this->get_buying_order($param["user"]["user_id"]); 
+            $order_id=$this->get_buying_order($param["user"]["user_id"],1);
             $cart=$order->getCart($order_id); // in same class , must use $this to call function
             http_response_code(200);
             echo json_encode(["message" => "Get Cart Successfully","data" => $cart]);
         } catch (PDOException $e) {
             echo "Unknown error in ProductController::addProduct: " . $e->getMessage();
+            die();
+        }
+    }
+    /////////////////////////////////////////////////////////////////////////////////////
+    // GET ORDER LIST for admin 
+    /////////////////////////////////////////////////////////////////////////////////////
+    public function getOrderList($param, $data)
+    {
+        try {
+            $order = new Order();
+            $cart=$order->getOrderList(); // in same class , must use $this to call function
+            http_response_code(200);
+            echo json_encode(["message" => "Get Order list for Admin Successfully","data" => $cart]);
+        } catch (PDOException $e) {
+            echo "Unknown error in ProductController::addProduct: " . $e->getMessage();
+            die();
+        }
+    }
+    /////////////////////////////////////////////////////////////////////////////////////
+    // Update Product
+    /////////////////////////////////////////////////////////////////////////////////////
+    public function editOrderStatus($param, $data)
+    {
+        try {
+            // Check if fields exist
+            $order = new order();
+            if (
+                !isset($data['order_id'])
+                || !isset($data['order_status'])
+            ) {
+                http_response_code(400);
+                echo json_encode(["message" => "Missing some fields"]);
+                return;
+            }
+            // Not yet check if order_id exist
+
+            // Update product
+            $result = $order->editOrderStatus( $data["order_id"],$data["order_status"]);
+
+            http_response_code(200);
+            echo json_encode(["message" => "The order updated status successfully"]);
+        } catch (PDOException $e) {
+            echo "Unknown error in ProductController::updateProduct: " . $e->getMessage();
             die();
         }
     }
@@ -209,9 +252,18 @@ class OrderController
             return;
         }
         $order = new Order();
-        $order_id=$this->get_buying_order($param["user"]["user_id"]);
-        $result = $order->create_order($user_id,$order_id,$data['email'],$data['user_name'],$data['country'],$data['province'],$data['city'],
+        //No BUYING Order has been created so you cant checkout
+        $order_id=$this->get_buying_order($param["user"]["user_id"],0);
+        if(empty($order_id)) 
+            {
+                http_response_code(404);
+                echo json_encode(["message" => "You need to add shoes to your cart first",]);
+                return;
+            }
+        $result = $order->create_order($param["user"]["user_id"],$order_id,$data['email'],$data['user_name'],$data['country'],$data['province'],$data['city'],
         $data['zip_code'],$data['address'],$data['phone_number'],$data['card_name'],$data['card_number'],$data['card_expiration'],$data['vcc']);
+        http_response_code(200);
+        echo json_encode(["message" => "Checkout Successfully"]);
     }
     public function create_order_details(){
         
