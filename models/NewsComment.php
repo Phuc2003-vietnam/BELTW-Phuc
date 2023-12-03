@@ -22,7 +22,7 @@ class NewsComment
         
         $whereClause = !empty($conditions) ? 'WHERE ' . implode(' AND ', $conditions) : '';
 
-        $query = "SELECT $selectClause FROM news_comments $whereClause ORDER BY news_comments.updated_at DESC";
+        $query = "SELECT $selectClause FROM News_Comments $whereClause ORDER BY News_Comments.updated_at DESC";
 
         try {
 
@@ -31,7 +31,7 @@ class NewsComment
 
         } catch (PDOException $e) {
 
-            echo "Unknown error in news_comments::get: " . $e->getMessage();
+            echo "Unknown error in News_Comments::get: " . $e->getMessage();
             
         }
     }
@@ -46,7 +46,7 @@ class NewsComment
         $columns = implode(', ', array_keys($data));
         $values = "'" . implode("', '", $data) . "'";
         
-        $query = "INSERT INTO news_comments ($columns) VALUES ($values)";
+        $query = "INSERT INTO News_Comments ($columns) VALUES ($values)";
         
         try {
 
@@ -55,7 +55,7 @@ class NewsComment
 
         } catch (PDOException $e) {
 
-            echo "Unknown error in news_comments::create: " . $e->getMessage();
+            echo "Unknown error in News_Comments::create: " . $e->getMessage();
         }
     }
 
@@ -63,7 +63,7 @@ class NewsComment
     {
         global $connection;
 
-        $query = "DELETE FROM news_comments WHERE comment_id = '$comment_id'";
+        $query = "DELETE FROM News_Comments WHERE comment_id = '$comment_id'";
    
         try {
 
