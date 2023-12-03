@@ -101,7 +101,7 @@ class AuthController
         try {
             $user = new User();
 
-            $result = $user->get(['email' => $email], ['email'], ['user_id', 'email', 'password', 'role']);
+            $result = $user->get(['email' => $email], ['email'], ['user_id', 'user_name' , 'email', 'password', 'role']);
             if ($result->rowCount() == 0) {
                 http_response_code(400);
                 echo json_encode(["message" => "Account does not exist"]);
