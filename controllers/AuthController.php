@@ -51,7 +51,7 @@ class AuthController
             $password = password_hash($password, PASSWORD_BCRYPT);
 
             // Create user, then associated user_info
-            $user->create(['email' => $email, 'password' => $password,'role'=>'STUDENT']);
+            $user->create(['email' => $email,'user_name' => $name , 'password' => $password ,'role'=>'STUDENT']);
             $newUserId = $user->get(['email' => $email], ['email'], ['user_id', 'role'])
                 ->fetch(PDO::FETCH_ASSOC);
            
@@ -101,7 +101,7 @@ class AuthController
         try {
             $user = new User();
 
-            $result = $user->get(['email' => $email], ['email'], ['user_id', 'email', 'password', 'role']);
+            $result = $user->get(['email' => $email], ['email'], ['user_id', 'user_name' , 'email', 'password', 'role']);
             if ($result->rowCount() == 0) {
                 http_response_code(400);
                 echo json_encode(["message" => "Account does not exist"]);

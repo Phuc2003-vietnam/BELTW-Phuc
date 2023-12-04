@@ -60,12 +60,13 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
         $r->addRoute('POST', '/checkout', ['requireLogin', 'create_order']);                  //xong
 
     });
+    
     // Product Group
     $r->addGroup('/{group:product}', function (FastRoute\RouteCollector $r) {
         $r->addRoute('GET', '', 'getProducts');  //xong , can get all or get single by name , category,order_by        
         $r->addRoute('GET', '/{id:\d+}', 'getSingleProduct');
         $r->addRoute('POST', '', ['requireAdmin', 'addProduct']); //xong
-        $r->addRoute('PATCH', '/{id:\d+}', ['requireAdmin', 'updateProduct']);  //xong
+        $r->addRoute('PATCH', '/{product_id:\d+}', ['requireAdmin', 'updateProduct']);  //xong
         $r->addRoute('DELETE', '', ['requireAdmin', 'deleteProduct']); //xong
         $r->addRoute('POST', '/{product_id:\d+}/comment', ['requireLogin', 'commentProduct']);   // Done
         $r->addRoute('DELETE', '/deletecomment/{comment_id:\d+}', ['requireLogin', 'deleteCommentProduct']);   // Done
