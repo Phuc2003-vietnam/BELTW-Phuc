@@ -60,6 +60,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
         $r->addRoute('POST', '/checkout', ['requireLogin', 'create_order']);                  //xong
 
     });
+    
     // Product Group
     $r->addGroup('/{group:product}', function (FastRoute\RouteCollector $r) {
         $r->addRoute('GET', '', 'getProducts');  //xong , can get all or get single by name , category,order_by        

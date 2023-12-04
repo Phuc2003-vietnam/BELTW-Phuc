@@ -51,7 +51,7 @@ class AuthController
             $password = password_hash($password, PASSWORD_BCRYPT);
 
             // Create user, then associated user_info
-            $user->create(['email' => $email, 'password' => $password,'role'=>'STUDENT']);
+            $user->create(['email' => $email,'user_name' => $name , 'password' => $password ,'role'=>'STUDENT']);
             $newUserId = $user->get(['email' => $email], ['email'], ['user_id', 'role'])
                 ->fetch(PDO::FETCH_ASSOC);
            
