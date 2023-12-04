@@ -148,7 +148,7 @@ class ProductController
 
             // Update product
             $result = $product->update(
-                $param['id'],
+                $param['product_id'],
                 $data,
                 ['product_name', 'description', 'size', 'price', 'quantity', 'color','thumbnail','category','discount']
             );
@@ -193,7 +193,7 @@ class ProductController
     /////////////////////////////////////////////////////////////////////////////////////
     public function commentProduct($param, $data)
     {
-        if (!isset($data['user_id']) || !isset($data['content']) || !isset($data['title']) || !isset($data['user_name']) || !isset($data['avatar_url']))
+        if (!isset($data['user_id']) || !isset($data['content']) || !isset($data['title']) || !isset($data['user_name']))
         {
             http_response_code(400);
             echo json_encode(["message" => "Missing user_id, content, title, image_url or name"]);
