@@ -89,7 +89,7 @@ class Order
     //GET ORDER LIST for admin 
     public function getOrderList(){
         global $connection;
-        $query= "SELECT user_name,order_id,created_at,total_money,order_status FROM Orders";
+        $query= "SELECT * FROM Orders";
         try {
             
             $result = $connection->prepare($query);
