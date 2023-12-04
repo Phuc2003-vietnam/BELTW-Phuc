@@ -9,7 +9,7 @@ class User
     //GET history order with status != buying . 
     public function get_buying_history($user_id){
         global $connection;
-        $query= "SELECT order_id,user_id,order_status,user_name FROM Orders WHERE order_status !='buying' AND user_id=$user_id ORDER BY created_at DESC";
+        $query= "SELECT *,updated_at AS checkout_at FROM Orders WHERE order_status !='buying' AND user_id=$user_id ORDER BY checkout_at DESC";
         try {
             
             $result = $connection->prepare($query);
