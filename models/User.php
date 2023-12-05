@@ -9,7 +9,8 @@ class User
     //GET history order with status != buying . 
     public function get_buying_history($user_id){
         global $connection;
-        $query= "SELECT *,updated_at AS checkout_at FROM Orders WHERE order_status !='buying' AND user_id=$user_id ORDER BY checkout_at DESC";
+        //becareful with checkout_at , it should be the current time when this code runs
+        $query= "SELECT *,created_at AS checkout_at FROM Orders WHERE order_status !='buying' AND user_id=$user_id ORDER BY checkout_at DESC";
         try {
             
             $result = $connection->prepare($query);
@@ -28,6 +29,19 @@ class User
                 //lay cai order_detail rồi tạo 1 biến array gán vào
             }
             return $row;
+        } catch (PDOException $e) {
+            echo "Unknown error in PRODUCT::get: " . $e->getMessage();
+        }
+    } 
+    public function get_user_information($user_id){
+        global $connection;
+        $query= "SELECT * FROM Users WHERE user_id=$user_id";
+        try {
+            
+            $result = $connection->prepare($query);
+            $result->execute();
+            return $result->fetchALL(PDO::FETCH_ASSOC);
+           
         } catch (PDOException $e) {
             echo "Unknown error in PRODUCT::get: " . $e->getMessage();
         }
@@ -88,15 +102,15 @@ class User
     {
         global $connection;
 
-        if (!empty($allowedKeys)) {
-            $data = array_intersect_key($data, array_flip($allowedKeys));
-        }
+        // if (!empty($allowedKeys)) {
+        //     $data = array_intersect_key($data, array_flip($allowedKeys));
+        // }
 
         foreach ($data as $key => $value) {
             $updates[] = "$key='$value'";
         }
 
-        $query = "UPDATE Users SET " . implode(", ", $updates) . " WHERE id='$id'";
+        $query = "UPDATE Users SET " . implode(", ", $updates) . " WHERE user_id='$id'";
 
         try {
             $result = $connection->prepare($query);

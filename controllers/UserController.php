@@ -80,4 +80,32 @@ class UserController
             echo "Unknown error in UserController::getSingleUser: " . $e->getMessage();
         }
     }
+    public function getUserInformation($param, $data)
+    {
+        try {
+            $user = new user();
+            $result = $user->get_user_information($param['user']['user_id']);
+            http_response_code(200);
+            echo json_encode(['message' => 'Get User Information Successfully', 'data' => $result]);
+        } catch (PDOException $e) {
+            echo "Unknown error in UserController::getSingleUser: " . $e->getMessage();
+        }
+    }
+     /////////////////////////////////////////////////////////////////////////////////////
+    // Update User Detail
+    /////////////////////////////////////////////////////////////////////////////////////
+    public function updateUserInformation($param, $data)
+    {
+        try {
+            $user = new user();
+            $result = $user->update($param['user']['user_id'],$data);
+         
+
+            http_response_code(200);
+            echo json_encode(["message" => "The user information updated successfully"]);
+        } catch (PDOException $e) {
+            echo "Unknown error in ProductController::updateProduct: " . $e->getMessage();
+            die();
+        }
+    }
 }
