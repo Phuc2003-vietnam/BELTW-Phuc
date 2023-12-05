@@ -50,7 +50,7 @@ class Order
         $query = "  SELECT Products.*,
                         GROUP_CONCAT(DISTINCT Thumbnails.thumbnail) AS combined_thumbnails,
                         GROUP_CONCAT(DISTINCT Sizes.size) AS combined_sizes
-                    FROM PRODUCTS 
+                    FROM Products 
                     LEFT JOIN Thumbnails ON Products.product_id = Thumbnails.product_id
                     LEFT JOIN Sizes ON Products.product_id = Sizes.product_id
                     $whereClause
@@ -120,7 +120,7 @@ class Order
     public function editOrderStatus($order_id,$order_status){
         global $connection;
         $order_status = strtolower($order_status);
-        $query= "UPDATE ORDERS SET order_status='$order_status' WHERE order_id=$order_id";
+        $query= "UPDATE Orders SET order_status='$order_status' WHERE order_id=$order_id";
         try {
             
             $result = $connection->prepare($query);
