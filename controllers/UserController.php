@@ -15,7 +15,7 @@ class UserController
     {
         try {
             $user = new User();
-            $result = $user->getGeneralList();
+            $result = $user->getAllUsers();
             $result = $result->fetchAll(PDO::FETCH_ASSOC);
 
             http_response_code(200);
@@ -76,6 +76,17 @@ class UserController
             $result = $user->get_buying_history($param['user']['user_id']);
             http_response_code(200);
             echo json_encode(['message' => 'History Order Fetched Successfully', 'data' => $result]);
+        } catch (PDOException $e) {
+            echo "Unknown error in UserController::getSingleUser: " . $e->getMessage();
+        }
+    }
+    public function deleteUser($param, $data)
+    {
+        try {
+            $user = new user();
+            $result = $user->delete($param['id']);
+            http_response_code(200);
+            echo json_encode(['message' => 'Delete User Information Successfully']);
         } catch (PDOException $e) {
             echo "Unknown error in UserController::getSingleUser: " . $e->getMessage();
         }

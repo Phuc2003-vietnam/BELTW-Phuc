@@ -126,9 +126,7 @@ class User
     public function delete($id)
     {
         global $connection;
-
-        $query = "DELETE FROM Users WHERE id='$id'";
-
+        $query = "DELETE FROM Users WHERE user_id='$id'";
         try {
             $result = $connection->prepare($query);
 
@@ -140,11 +138,11 @@ class User
         }
     }
 
-    public function getGeneralList()
+    public function getAllUsers()
     {
         global $connection;
 
-        $query = "SELECT USERS.id, email, name, role FROM Users INNER JOIN USER_INFO ON USERS.id = user_info.id";
+        $query = "SELECT *  FROM Users WHERE role!='ADMIN'";
 
         try {
             $result = $connection->prepare($query);

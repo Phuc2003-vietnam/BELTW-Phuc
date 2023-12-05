@@ -12,13 +12,13 @@ class AuthController
     public function register($param, $data)
     {
         // Checking body data
-        if (!isset($data['name']) || !isset($data['password']) || !isset($data['email'])) {
+        if (!isset($data['user_name']) || !isset($data['password']) || !isset($data['email'])) {
             http_response_code(400);
             echo json_encode(["message" => "Missing email, password, or name "]);
             return;
         }
         // Validate the data
-        $name = $data['name'];
+        $user_name = $data['user_name'];
         $email = $data['email'];
         $password = $data['password'];
         $confirm_password = $data['confirm_password'];
@@ -35,6 +35,7 @@ class AuthController
         {
             http_response_code(400);
             echo json_encode(["message" => "Password and Confirmed Passwored are not matched"]);
+            return;
         }
 
         try {   
@@ -51,7 +52,7 @@ class AuthController
             $password = password_hash($password, PASSWORD_BCRYPT);
 
             // Create user, then associated user_info
-            $user->create(['email' => $email, 'password' => $password,'role'=>'CUSTOMER']);
+            $user->create(['email' => $email, 'password' => $password,'role'=>'CUSTOMER','user_name'=>$user_name]);
             $newUserId = $user->get(['email' => $email], ['email'], ['user_id', 'role'])
                 ->fetch(PDO::FETCH_ASSOC);
            
@@ -63,9 +64,6 @@ class AuthController
             ];
             $jwt = JWT::encode($row, $_ENV['SECRECT_KEY'], 'HS256');
 
-            // Attached data for client side
-            $row['name'] = $name;
-            // $row['image_url'] = $image_url;
 
             http_response_code(200);
             echo json_encode(["message" => "User created successfully", "token" => $jwt, "data" => $row]);
