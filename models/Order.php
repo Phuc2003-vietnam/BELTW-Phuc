@@ -282,7 +282,7 @@ class Order
                 $update_size = $connection->prepare($query_size_update);
                 $update_size->execute();
                 }
-                echo "asdas";
+                // echo "asdas";
                     
             return $result;
         } catch (PDOException $e) {
