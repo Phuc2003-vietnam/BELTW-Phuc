@@ -69,7 +69,17 @@ class ProductController
                 die();
             }
             $row = $result->fetch(PDO::FETCH_ASSOC);
-
+            //explode the strings to array for easier get from FE
+           { $thumbnails = explode(',', $row['combined_thumbnails']);
+                $sizes = explode(',', $row['combined_sizes']);
+            
+                // Add thumbnails and sizes to their respective arrays
+                $row["thumbnails"] = $thumbnails;
+                $row["sizes"] = $sizes;
+                //delete fields
+                unset($row['combined_thumbnails']);
+                unset($row['combined_sizes']);
+           }
             // Get product category
             // $result = $productCategory->get(['product_id' => $param['id']], ['product_id'], ['CATEGORY.id', 'CATEGORY.name']);
             // $row['categories'] = $result->fetchAll(PDO::FETCH_ASSOC);
